@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 const UPLOAD_STEPS = [
   { id: 1, label: "Upload to Cloud" },
@@ -20,6 +21,8 @@ export const SingleFileUploader = () => {
   const [file, setFile] = useState<File | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+
+  const { userDetails } = useAuthRedirect();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -37,6 +40,10 @@ export const SingleFileUploader = () => {
     maxFiles: 1,
   });
 
+  const handleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   const handleUpload = async () => {
     if (file) {
       setIsUploading(true);
@@ -47,9 +54,15 @@ export const SingleFileUploader = () => {
 
   return (
     <div className="w-full max-w-md mx-auto p-6">
-      <h2 className="text-2xl font-semibold text-center mb-2">
-        Transcribe your Files Here
-      </h2>
+      {userDetails ? (
+        <h2 className="text-2xl font-semibold text-center mb-2">
+          Transcribe your Files here, {userDetails.name}!
+        </h2>
+      ) : (
+        <h2 className="text-2xl font-semibold text-center mb-2">
+          Transcribe your Files here
+        </h2>
+      )}
       <p className="text-sm text-gray-600 text-center mb-4">
         Supported files are .mov .mp4 .avi
       </p>
@@ -76,8 +89,15 @@ export const SingleFileUploader = () => {
             <FileVideo className="h-6 w-6 text-primary mr-2" />
             <span className="text-sm text-gray-700 truncate">{file.name}</span>
           </div>
-          {!isUploading && currentStep === 0 && (
-            <Button onClick={handleUpload} className="w-full">
+          {userDetails ? (
+            !isUploading &&
+            currentStep === 0 && (
+              <Button onClick={handleUpload} className="w-full">
+                <Cloud className="mr-2 h-4 w-4" /> Upload to Cloud
+              </Button>
+            )
+          ) : (
+            <Button onClick={handleLogin} className="w-full">
               <Cloud className="mr-2 h-4 w-4" /> Upload to Cloud
             </Button>
           )}
