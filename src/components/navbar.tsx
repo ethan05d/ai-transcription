@@ -2,6 +2,7 @@ import { userDetailsInterface } from "@/services/userService";
 import { Home, Video, LogIn } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ProfileMenu } from "./profileMenu";
+import { BACKEND_API_URL } from "@/services/userService";
 
 interface FloatingNavBarProps {
   userDetails?: userDetailsInterface;
@@ -11,11 +12,11 @@ export const FloatingNavbar = ({ userDetails }: FloatingNavBarProps) => {
   const location = useLocation();
 
   const handleAuth = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = `${BACKEND_API_URL}/oauth2/authorization/google`;
   };
 
   const handleLogout = () => {
-    window.location.href = "http://localhost:8080/logout";
+    window.location.href = `${BACKEND_API_URL}/logout`;
   };
 
   return (
@@ -32,13 +33,15 @@ export const FloatingNavbar = ({ userDetails }: FloatingNavBarProps) => {
             <span className="sr-only">Home</span>
           </Link>
           <Link
-            to="/video"
+            to="/videos"
             className={`flex items-center justify-center w-10 h-10 rounded-full ${
-              location.pathname === "/video" ? "text-blue-500" : "text-gray-600"
+              location.pathname === "/videos"
+                ? "text-blue-500"
+                : "text-gray-600"
             } hover:text-blue-500 hover:bg-gray-200 transition-all duration-200`}
           >
             <Video className="h-6 w-6" />
-            <span className="sr-only">Video</span>
+            <span className="sr-only">Videos</span>
           </Link>
           {userDetails ? (
             <ProfileMenu

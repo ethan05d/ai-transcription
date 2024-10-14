@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { FileVideo, Upload, Check, Cloud } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { BACKEND_API_URL } from "@/services/userService";
+import { useUploadVideo } from "@/hooks/useUploadVideo";
+import { useNavigate } from "react-router-dom";
 
 const UPLOAD_STEPS = [
   { id: 1, label: "Upload to Cloud" },
@@ -21,7 +24,9 @@ export const SingleFileUploader = () => {
   const [file, setFile] = useState<File | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const navigate = useNavigate();
 
+  const { mutate: uploadVideo, isError, isSuccess } = useUploadVideo();
   const { userDetails } = useAuthRedirect();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -41,22 +46,42 @@ export const SingleFileUploader = () => {
   });
 
   const handleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = `${BACKEND_API_URL}/oauth2/authorization/google`;
   };
 
   const handleUpload = async () => {
     if (file) {
       setIsUploading(true);
       setCurrentStep(1);
+      uploadVideo(file);
     }
-    // Handle later
   };
+
+  // Effect to handle step progression based on isSuccess and isError
+  useEffect(() => {
+    if (isSuccess) {
+      setCurrentStep(2); // Step 2: Transcribing
+      // Simulate transcription delay
+      setTimeout(() => {
+        setCurrentStep(3); // Step 3: Uploading to User Profile
+        setTimeout(() => {
+          setCurrentStep(4); // Step 4: Redirecting
+          setIsUploading(false);
+          // Simulate redirection or any further actions
+          navigate("/videos");
+        }, 500);
+      }, 500);
+    } else if (isError) {
+      setIsUploading(false);
+      setCurrentStep(0); // Reset steps if there's an error
+    }
+  }, [isSuccess, isError]);
 
   return (
     <div className="w-full max-w-md mx-auto p-6">
       {userDetails ? (
         <h2 className="text-2xl font-semibold text-center mb-2">
-          Transcribe your Files here, {userDetails.name}!
+          Transcribe your files here, {userDetails.name}!
         </h2>
       ) : (
         <h2 className="text-2xl font-semibold text-center mb-2">
@@ -116,13 +141,18 @@ export const SingleFileUploader = () => {
                     currentStep >= step.id ? "bg-green-500" : "bg-gray-200"
                   }`}
                 >
-                  <Check
-                    className={`text-white transition-all duration-300 ease-in-out ${
-                      currentStep >= step.id
-                        ? "opacity-100 scale-100"
-                        : "opacity-0 scale-0"
-                    }`}
-                  />
+                  {currentStep >= step.id ? (
+                    <Check
+                      className={`text-white transition-all duration-300 ease-in-out ${
+                        currentStep >= step.id
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-0"
+                      }`}
+                    />
+                  ) : (
+                    // Custom spinner using Tailwind classes
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-primary"></div>
+                  )}
                 </div>
                 <span
                   className={`text-sm transition-colors duration-300 ease-in-out ${

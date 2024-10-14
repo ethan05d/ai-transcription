@@ -5,11 +5,11 @@ export interface userDetailsInterface {
   profilePictureUrl: string;
 }
 
-const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL as String;
+export const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL as String;
 
 export const getUserInfo = async (): Promise<userDetailsInterface> => {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/user-info`, {
+    const response = await fetch(`${BACKEND_API_URL}/api/v1/user-info`, {
       credentials: "include",
     });
 
