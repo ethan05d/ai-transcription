@@ -138,7 +138,12 @@ public class AwsServiceImpl implements AwsService {
             final String keyName
     ) throws AmazonClientException {
         try {
+
             s3Client.deleteObject(bucketName, keyName);
+
+            // Delete from Video DB
+            videoService.deleteVideoByKeyName(keyName);
+
             log.info("File deleted from bucket({}): {}", bucketName, keyName);
         } catch (AmazonClientException e) {
             log.error("Error deleting file from S3: {}", e.getMessage());

@@ -1,5 +1,6 @@
 package com.example.transcription.Services;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.example.transcription.Models.User;
 import com.example.transcription.Models.Video;
 import com.example.transcription.Repositories.VideoRepository;
@@ -59,6 +60,15 @@ public class VideoService {
                 .user(userService.findOrCreateUserFromPrincipal(principal))
                 .build();
         return videoRepository.save(video);
+    }
+
+    public void deleteVideoByKeyName(String keyName) {
+        Optional<Video> videoToDelete = videoRepository.findByFileName(keyName);
+
+        if (videoToDelete.isEmpty()) {
+            throw new RuntimeException("Can't delete video, video not found.");
+        }
+        videoRepository.delete(videoToDelete.get());
     }
 
 

@@ -1,7 +1,6 @@
 package com.example.transcription.Controllers;
 
 import com.example.transcription.FileType;
-import com.example.transcription.Models.gptWhisper.Response.WhisperTranscriptionResponse;
 
 import com.example.transcription.Services.AwsService;
 import lombok.SneakyThrows;
@@ -48,12 +47,14 @@ public class AwsController {
             return ResponseEntity.badRequest().body("File is empty");
         }
 
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String oauthId = principal.getSubject();
+        String uniqueFileName = oauthId + "_" + originalFileName;
         String contentType = file.getContentType();
         long fileSize = file.getSize();
         InputStream inputStream = file.getInputStream();
 
-        awsService.uploadFile(bucketName, fileName, fileSize, contentType, inputStream, file, principal);
+        awsService.uploadFile(bucketName, uniqueFileName, fileSize, contentType, inputStream, file, principal);
 
         return ResponseEntity.ok().body("File successfully uploaded and transcribed.");
     }
