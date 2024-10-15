@@ -24,7 +24,7 @@ This project is a full-stack application that leverages **OpenAI's Whisper** for
 Before setting up the project, ensure that you have the following installed:
 
 - **Docker** and **Docker Compose**
-- **Java 17** (for Spring Boot)
+- **Java 17+** (for Spring Boot)
 - **Node.js** (for Vite + React)
 - **AWS S3** credentials
 - **OpenAI API Key**
