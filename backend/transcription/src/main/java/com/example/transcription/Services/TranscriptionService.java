@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TranscriptionService {
 
@@ -33,6 +35,7 @@ public class TranscriptionService {
         Transcription transcription = Transcription.builder()
                 .video(video)
                 .status("In-progress")
+                .createdAt(LocalDateTime.now())
                 .build();
         transcription = transcriptionRepository.save(transcription);
 

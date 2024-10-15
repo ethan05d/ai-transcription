@@ -16,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/s3")
@@ -47,9 +49,23 @@ public class AwsController {
             return ResponseEntity.badRequest().body("File is empty");
         }
 
+        val existingFiles = awsService.listFiles(bucketName);
+        // Create a HashSet for fast lookups
+        Set<String> fileSet = new HashSet<>(existingFiles);
+
+        // Get the original file name and construct the base file name
         String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         String oauthId = principal.getSubject();
-        String uniqueFileName = oauthId + "_" + originalFileName;
+        String uniqueFileName = oauthId + "_" + originalFileName; // Base name without a suffix
+
+        // Check if the file already exists and generate a new name if needed
+        int counter = 1;
+        while (fileSet.contains(uniqueFileName)) {
+            // If the file exists, append a counter after oauthId (e.g., oauthId_(1)myFile.txt)
+            uniqueFileName = oauthId + "_(" + counter + ")" + originalFileName;
+            counter++;
+        }
+
         String contentType = file.getContentType();
         long fileSize = file.getSize();
         InputStream inputStream = file.getInputStream();

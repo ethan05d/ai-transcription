@@ -43,9 +43,4 @@ public class Video {
     @JsonIgnore
     private Transcription transcription;
 
-    @PrePersist
-    protected void onCreate() {
-        this.uploadTimestamp = LocalDateTime.now();
-
-    }
 }

@@ -2,9 +2,11 @@ package com.example.transcription.Services;
 
 import com.example.transcription.Models.User;
 import com.example.transcription.Repositories.UserRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -44,6 +46,7 @@ public class UserService {
         newUser.setName(name);
         newUser.setProvider(provider);
         newUser.setProfilePictureUrl(profilePictureUrl);
+        newUser.setCreatedAt(LocalDateTime.now());
         return userRepository.save(newUser);
     }
 }

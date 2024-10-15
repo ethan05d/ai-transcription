@@ -33,13 +33,5 @@ public class Transcription {
     @Column(name = "status")
     private String status;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = "In-progress";  // Default status
-        }
-    }
-
 
 }

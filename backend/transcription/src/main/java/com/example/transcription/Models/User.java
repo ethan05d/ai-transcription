@@ -41,9 +41,5 @@ public class User {
     @JsonIgnore
     private List<Video> videos;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 
 }
