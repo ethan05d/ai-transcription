@@ -1,0 +1,40 @@
+services:
+  springboot-app:
+    build:
+      context: ./backend/transcription
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/transcription/.env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+  vite-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Vite typically runs on port 3000
+    volumes:
+      - ./:/usr/src/app # Mount the project directory
+      - node_modules:/usr/src/app/node_modules # Use a named volume for node_modules
+    working_dir: /usr/src/app
+    command: npm run dev # Run Vite in development mode
+
+volumes:
+  node_modules: # Named volume for node_modules

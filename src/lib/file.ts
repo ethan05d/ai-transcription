@@ -44,9 +44,11 @@ export function formatFileSize(bytes: number): string {
   return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
 }
 
-export function formatTimestamp(uploadTimestamp: string): string {
-  const date = new Date(uploadTimestamp);
+export function formatTimestamp(timestamp: string): string {
+  // Parse the timestamp into a Date object
+  const date = new Date(timestamp);
 
+  // Format the date using Intl.DateTimeFormat
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",

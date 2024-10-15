@@ -26,7 +26,6 @@ export const Videos = () => {
       </h1>
     );
   }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="flex justify-center text-2xl font-bold mb-6">
